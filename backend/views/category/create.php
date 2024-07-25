@@ -1,27 +1,20 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Category */
-/* @var $form yii\widgets\ActiveForm */
+/** @var yii\web\View $this */
+/** @var backend\models\Category $model */
 
 $this->title = 'Create Category';
 $this->params['breadcrumbs'][] = ['label' => 'Categories', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="category-form">
+<div class="category-create">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Create', ['class' => 'btn btn-success']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
+    <?= $this->render('_form', [
+        'model' => $model,
+    ]) ?>
 
 </div>
-

@@ -1,26 +1,44 @@
 <?php
 
-/* @var $this \yii\web\View */
-/* @var $searchModel \backend\models\CategorySearch */
-/* @var $dataProvider \yii\data\ActiveDataProvider */
-
+use backend\models\Category;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use yii\bootstrap5\Html;
 
-$this->title = 'Category';
+/** @var yii\web\View $this */
+/** @var backend\models\CategorySearch $searchModel */
+/** @var yii\data\ActiveDataProvider $dataProvider */
+
+$this->title = 'Categories';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-    <h1><?= Html::encode($this->title) ?></h1>
-    <div class="form-group">
-        <?= Html::a('Create Category', ['create'], ['class' => 'btn btn-success']) ?>
-    </div>
+<div class="category-index">
 
-<?= GridView::widget([
-    'dataProvider' => $dataProvider,
-    'filterModel' => $searchModel,
-    'columns' => [
-        'id',
-        'title',
-        ['class' => 'yii\grid\ActionColumn'],
-    ],
-]); ?>
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?= Html::a('Create Category', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'id',
+            'title',
+            [
+                'class' => ActionColumn::className(),
+                'urlCreator' => function ($action, Category $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'id' => $model->id]);
+                 }
+            ],
+        ],
+    ]); ?>
+
+
+</div>

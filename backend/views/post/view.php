@@ -1,41 +1,40 @@
 <?php
-/* @var $this \yii\web\View */
-/* @var $model \common\models\Post */
 
-use yii\grid\GridView;
+use yii\helpers\Html;
+use yii\widgets\DetailView;
 
+/** @var yii\web\View $this */
+/** @var backend\models\Posts $model */
 
-$this->title = 'View Post';
+$this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Posts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+\yii\web\YiiAsset::register($this);
 ?>
-<div class="container px-5 py-4">
-    <div class="row row-cols-1 row-cols-md-12 g-5">
-        <?php if (!empty($post)) : ?>
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <ul class="list-unstyled">
-                            <li><strong>Title:</strong><?= $post->title ?></li>
-                        </ul>
-                        <ul class="list-unstyled">
-                            <li><strong>Content:</strong><?= $post->content ?></li>
-                        </ul>
-                        <strong>Categories:</strong>
-                        <?= GridView::widget([
-                            'dataProvider' => new \yii\data\ActiveDataProvider([
-                                'query' => $post->getCategories(),
-                                'pagination' => false,
-                            ]),
-                            'columns' => [
-                                'id',
-                                'title',
-                            ],
-                        ]); ?>
+<div class="posts-view">
 
-                    </div>
-                </div>
-            </div>
-        <?php endif; ?>
-    </div>
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'id',
+            'title',
+            'content:ntext',
+            'created_at',
+            'updated_at',
+        ],
+    ]) ?>
+
 </div>

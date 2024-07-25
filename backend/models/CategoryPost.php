@@ -2,21 +2,19 @@
 
 namespace backend\models;
 
-use common\models\Category;
-use common\models\Post;
-use yii\db\ActiveRecord;
+use Yii;
 
 /**
  * This is the model class for table "category_post".
  *
  * @property int $id
- * @property int $category_id
- * @property int $post_id
+ * @property int|null $category_id
+ * @property int|null $post_id
  *
  * @property Category $category
- * @property Post $post
+ * @property Posts $post
  */
-class CategoryPost extends ActiveRecord
+class CategoryPost extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -32,15 +30,27 @@ class CategoryPost extends ActiveRecord
     public function rules()
     {
         return [
-            [['category_id', 'post_id'], 'required'],
             [['category_id', 'post_id'], 'integer'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
-            [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::class, 'targetAttribute' => ['post_id' => 'id']],
-
+            [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Posts::class, 'targetAttribute' => ['post_id' => 'id']],
         ];
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'category_id' => 'Category ID',
+            'post_id' => 'Post ID',
+        ];
+    }
+
+    /**
+     * Gets query for [[Category]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getCategory()
@@ -49,10 +59,12 @@ class CategoryPost extends ActiveRecord
     }
 
     /**
+     * Gets query for [[Post]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPost()
     {
-        return $this->hasOne(Post::class, ['id' => 'post_id']);
+        return $this->hasOne(Posts::class, ['id' => 'post_id']);
     }
 }
