@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\Posts;
 use backend\models\PostSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -93,7 +94,14 @@ class PostController extends Controller
     {
         $model = $this->findModel($id);
 
+        $model->categories = ArrayHelper::getColumn(
+            $model->categoryPosts,
+            'category_id'
+        );
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            $model->updateCategories();
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -101,6 +109,7 @@ class PostController extends Controller
             'model' => $model,
         ]);
     }
+
 
     /**
      * Deletes an existing Posts model.

@@ -1,5 +1,8 @@
 <?php
 
+use backend\models\Category;
+use bajadev\ckeditor\CKEditor;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -14,11 +17,26 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'content')->widget(CKEditor::class, [
+        'options' => [
+            'rows' => 6,
+            'height' => 400,
+            'toolbar' => [
+                ['Bold', 'Italic', 'Underline'],
+                ['NumberedList', 'BulletedList'],
+                ['Link', 'Unlink'],
+                ['Image', 'Table', 'HorizontalRule'],
+                ['Undo', 'Redo']
+            ],
+            'removePlugins' => 'elementspath',
+            'resize_enabled' => false,
+        ],
+    ]) ?>
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
+    <?= $form->field($model, 'categories')->checkboxList(
+        ArrayHelper::map(Category::find()->all(), 'id', 'title'),
+        ['separator' => '<br>']
+    ) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

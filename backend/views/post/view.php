@@ -32,8 +32,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'content:ntext',
-            'created_at',
-            'updated_at',
+            [
+                'attribute' => 'categories',
+                'value' => function($model) {
+                    return $model->getCategoryNames();
+                },
+                'format' => 'text',
+            ],
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 
