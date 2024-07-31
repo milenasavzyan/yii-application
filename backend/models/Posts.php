@@ -65,6 +65,10 @@ class Posts extends \yii\db\ActiveRecord
     {
         return $this->hasMany(CategoryPost::class, ['post_id' => 'id']);
     }
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'id']); // Adjust 'cat_id' to the correct column name
+    }
     public function getCategoryNames()
     {
         return implode(', ', array_map(function($categoryPost) {

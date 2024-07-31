@@ -58,4 +58,5 @@ class Category extends \yii\db\ActiveRecord
     {
         return $this->hasMany(CategoryPost::class, ['category_id' => 'id']);
     }
+
 }

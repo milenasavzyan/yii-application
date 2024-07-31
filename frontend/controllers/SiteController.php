@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use backend\models\Category;
+use backend\models\Posts;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -73,10 +75,25 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($categoryId = null)
     {
-        return $this->render('index');
+        $categories = Category::find()->all();
+        $query = Posts::find()->joinWith('categoryPosts');
+
+        if ($categoryId !== null) {
+            $query->andWhere(['category_post.category_id' => $categoryId]);
+        }
+
+        $posts = $query->all();
+
+        return $this->render('index', [
+            'posts' => $posts,
+            'categories' => $categories,
+            'selectedCategory' => $categoryId
+        ]);
     }
+
+
 
     /**
      * Logs in a user.
