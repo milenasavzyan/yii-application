@@ -1,9 +1,9 @@
 <?php
-
 namespace common\models;
 
-use Yii;
-use yii\helpers\ArrayHelper;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "posts".
@@ -16,9 +16,10 @@ use yii\helpers\ArrayHelper;
  *
  * @property CategoryPost[] $categoryPosts
  */
-class Posts extends \yii\db\ActiveRecord
+class Posts extends ActiveRecord
 {
     public $categories = [];
+
     /**
      * {@inheritdoc}
      */
@@ -33,7 +34,7 @@ class Posts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'content', 'created_at', 'updated_at'], 'required'],
+            [['title', 'content'], 'required'],
             [['content'], 'string'],
             [['created_at', 'updated_at'], 'integer'],
             [['title'], 'string', 'max' => 255],
@@ -57,6 +58,23 @@ class Posts extends \yii\db\ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class => [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
+    /**
      * Gets query for [[CategoryPosts]].
      *
      * @return \yii\db\ActiveQuery
@@ -65,10 +83,12 @@ class Posts extends \yii\db\ActiveRecord
     {
         return $this->hasMany(CategoryPost::class, ['post_id' => 'id']);
     }
+
     public function getCategory()
     {
         return $this->hasOne(Category::class, ['id' => 'id']);
     }
+
     public function getCategoryNames()
     {
         return implode(', ', array_map(function($categoryPost) {
@@ -103,5 +123,4 @@ class Posts extends \yii\db\ActiveRecord
             $categoryPost->save();
         }
     }
-
 }

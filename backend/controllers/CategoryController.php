@@ -5,6 +5,7 @@ namespace backend\controllers;
 use common\models\Category;
 use backend\models\CategorySearch;
 use yii\web\Controller;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -18,17 +19,24 @@ class CategoryController extends Controller
      */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update'],
+                        'allow' => true,
+                        'roles' => ['@'],
                     ],
                 ],
-            ]
-        );
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -65,34 +73,13 @@ class CategoryController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-//    public function actionCreate()
-//    {
-//        $model = new Category();
-//
-//        if ($this->request->isPost) {
-//            if ($model->load($this->request->post()) && $model->save()) {
-//                return $this->redirect(['view', 'id' => $model->id]);
-//            }
-//        } else {
-//            $model->loadDefaultValues();
-//        }
-//
-//        return $this->render('create', [
-//            'model' => $model,
-//        ]);
-//    }
     public function actionCreate()
     {
         $model = new Category();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->created_at = time();
-                $model->updated_at = time();
-
-                if ($model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();

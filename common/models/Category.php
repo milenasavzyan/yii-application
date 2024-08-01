@@ -2,8 +2,9 @@
 
 namespace common\models;
 
-use common\models\CategoryPost;
-use Yii;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "category".
@@ -15,7 +16,7 @@ use Yii;
  *
  * @property CategoryPost[] $categoryPosts
  */
-class Category extends \yii\db\ActiveRecord
+class Category extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -31,7 +32,7 @@ class Category extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'created_at', 'updated_at'], 'required'],
+            [['title'], 'required'],
             [['created_at', 'updated_at'], 'integer'],
             [['title'], 'string', 'max' => 255],
         ];
@@ -51,6 +52,23 @@ class Category extends \yii\db\ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class => [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
+    /**
      * Gets query for [[CategoryPosts]].
      *
      * @return \yii\db\ActiveQuery
@@ -59,5 +77,4 @@ class Category extends \yii\db\ActiveRecord
     {
         return $this->hasMany(CategoryPost::class, ['category_id' => 'id']);
     }
-
 }

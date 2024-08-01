@@ -5,6 +5,7 @@ namespace backend\controllers;
 use common\models\Posts;
 use backend\models\PostSearch;
 use Yii;
+use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -20,17 +21,24 @@ class PostController extends Controller
      */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::class,
-                    'actions' => [
-                        'delete' => ['POST'],
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update'],
+                        'allow' => true,
+                        'roles' => ['@'],
                     ],
                 ],
-            ]
-        );
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -75,9 +83,6 @@ class PostController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model->created_at = time();
-                $model->updated_at = time();
-
                 if ($model->save()) {
                     $model->updateCategories();
 
@@ -93,7 +98,6 @@ class PostController extends Controller
             'categoryOptions' => $model->getCategoryOptions(),
         ]);
     }
-
 
     /**
      * Updates an existing Posts model.
