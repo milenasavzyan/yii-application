@@ -4,7 +4,7 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\Posts;
+use common\models\Posts;
 
 /**
  * PostSearch represents the model behind the search form of `app\models\Posts`.

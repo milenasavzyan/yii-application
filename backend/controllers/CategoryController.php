@@ -2,7 +2,7 @@
 
 namespace backend\controllers;
 
-use backend\models\Category;
+use common\models\Category;
 use backend\models\CategorySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -22,7 +22,7 @@ class CategoryController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -65,13 +65,34 @@ class CategoryController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+//    public function actionCreate()
+//    {
+//        $model = new Category();
+//
+//        if ($this->request->isPost) {
+//            if ($model->load($this->request->post()) && $model->save()) {
+//                return $this->redirect(['view', 'id' => $model->id]);
+//            }
+//        } else {
+//            $model->loadDefaultValues();
+//        }
+//
+//        return $this->render('create', [
+//            'model' => $model,
+//        ]);
+//    }
     public function actionCreate()
     {
         $model = new Category();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->created_at = time();
+                $model->updated_at = time();
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -81,6 +102,7 @@ class CategoryController extends Controller
             'model' => $model,
         ]);
     }
+
 
     /**
      * Updates an existing Category model.

@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -67,7 +67,7 @@ class Posts extends \yii\db\ActiveRecord
     }
     public function getCategory()
     {
-        return $this->hasOne(Category::class, ['id' => 'id']); // Adjust 'cat_id' to the correct column name
+        return $this->hasOne(Category::class, ['id' => 'id']);
     }
     public function getCategoryNames()
     {
@@ -78,7 +78,7 @@ class Posts extends \yii\db\ActiveRecord
 
     public function getCategoryOptions()
     {
-        return \backend\models\Category::find()->select(['title', 'id'])->indexBy('id')->column();
+        return \common\models\Category::find()->select(['title', 'id'])->indexBy('id')->column();
     }
 
     /**

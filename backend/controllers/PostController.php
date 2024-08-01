@@ -2,8 +2,9 @@
 
 namespace backend\controllers;
 
-use backend\models\Posts;
+use common\models\Posts;
 use backend\models\PostSearch;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -23,7 +24,7 @@ class PostController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -73,8 +74,15 @@ class PostController extends Controller
         $model = new Posts();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->created_at = time();
+                $model->updated_at = time();
+
+                if ($model->save()) {
+                    $model->updateCategories();
+
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -82,8 +90,10 @@ class PostController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'categoryOptions' => $model->getCategoryOptions(),
         ]);
     }
+
 
     /**
      * Updates an existing Posts model.

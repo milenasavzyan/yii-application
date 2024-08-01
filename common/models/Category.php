@@ -1,7 +1,8 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
+use common\models\CategoryPost;
 use Yii;
 
 /**

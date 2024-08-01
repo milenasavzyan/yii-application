@@ -2,8 +2,8 @@
 
 namespace frontend\controllers;
 
-use backend\models\Category;
-use backend\models\Posts;
+use common\models\Category;
+use common\models\Posts;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;

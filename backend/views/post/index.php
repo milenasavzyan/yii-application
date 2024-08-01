@@ -1,6 +1,6 @@
 <?php
 
-use backend\models\Posts;
+use common\models\Posts;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'title',
             'content:ntext',
             [
-                'class' => ActionColumn::className(),
+                'class' => ActionColumn::class,
                 'urlCreator' => function ($action, Posts $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
