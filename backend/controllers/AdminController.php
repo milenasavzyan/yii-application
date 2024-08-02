@@ -8,7 +8,6 @@ use yii\web\Controller;
 
 class AdminController extends Controller
 {
-
     /**
      * @inheritDoc
      */
@@ -19,7 +18,6 @@ class AdminController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'update', 'delete', 'view'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -33,5 +31,4 @@ class AdminController extends Controller
             ],
         ];
     }
-
 }
