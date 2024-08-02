@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\CategoryPost;
 use common\models\Posts;
 use backend\models\PostSearch;
 use yii\helpers\ArrayHelper;
@@ -49,17 +50,25 @@ class PostController extends AdminController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+    /**
+     * Creates a new Posts model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
     public function actionCreate()
     {
         $model = new Posts();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                if ($model->save()) {
-                    $model->updateCategories();
-
-                    return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post()) && $model->save()) {
+                foreach ($model->categories as $categoryId) {
+                    $categoryPost = new CategoryPost();
+                    $categoryPost->post_id = $model->id;
+                    $categoryPost->category_id = $categoryId;
+                    $categoryPost->save();
                 }
+
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -70,6 +79,7 @@ class PostController extends AdminController
             'categoryOptions' => $model->getCategoryOptions(),
         ]);
     }
+
 
     /**
      * Updates an existing Posts model.
