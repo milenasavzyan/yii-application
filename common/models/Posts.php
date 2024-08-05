@@ -114,7 +114,7 @@ class Posts extends ActiveRecord
     /**
      * Saves the selected categories for this post.
      */
-    protected function saveCategories()
+    public function saveCategories()
     {
         foreach ($this->categories as $categoryId) {
             $categoryPost = new CategoryPost();

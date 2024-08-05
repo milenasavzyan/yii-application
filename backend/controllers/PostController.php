@@ -61,12 +61,8 @@ class PostController extends AdminController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                foreach ($model->categories as $categoryId) {
-                    $categoryPost = new CategoryPost();
-                    $categoryPost->post_id = $model->id;
-                    $categoryPost->category_id = $categoryId;
-                    $categoryPost->save();
-                }
+
+                $model->saveCategories();
 
                 return $this->redirect(['view', 'id' => $model->id]);
             }
