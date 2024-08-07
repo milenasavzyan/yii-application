@@ -38,9 +38,6 @@ AppAsset::register($this);
         ['label' => 'Posts', 'url' => ['/post/index']],
         ['label' => 'Categories', 'url' => ['/category/index']],
     ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
         'items' => $menuItems,

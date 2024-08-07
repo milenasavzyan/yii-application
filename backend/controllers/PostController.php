@@ -2,9 +2,9 @@
 
 namespace backend\controllers;
 
-use common\models\CategoryPost;
 use common\models\Posts;
 use backend\models\PostSearch;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
@@ -60,11 +60,30 @@ class PostController extends AdminController
         $model = new Posts();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+                $imageFile = \yii\web\UploadedFile::getInstance($model, 'imageFile');
 
-                $model->saveCategories();
+                if ($imageFile) {
+                    $uploadPath = Yii::getAlias('@frontend/web/uploads/');
 
-                return $this->redirect(['view', 'id' => $model->id]);
+                    if (!is_dir($uploadPath)) {
+                        mkdir($uploadPath, 0775, true);
+                    }
+
+                    $imagePath = $uploadPath . uniqid() . '.' . $imageFile->extension;
+
+                    if ($imageFile->saveAs($imagePath)) {
+                        $model->image = 'uploads/' . basename($imagePath);
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Failed to save image.');
+                    }
+                }
+
+                if ($model->save()) {
+                    $model->saveCategories();
+
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -75,6 +94,8 @@ class PostController extends AdminController
             'categoryOptions' => $model->getCategoryOptions(),
         ]);
     }
+
+
 
 
     /**
@@ -93,14 +114,43 @@ class PostController extends AdminController
             'category_id'
         );
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            $model->updateCategories();
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $imageFile = \yii\web\UploadedFile::getInstance($model, 'imageFile');
 
-            return $this->redirect(['view', 'id' => $model->id]);
+                if ($imageFile) {
+                    $uploadPath = Yii::getAlias('@frontend/web/uploads/');
+
+                    if (!is_dir($uploadPath)) {
+                        mkdir($uploadPath, 0775, true);
+                    }
+
+                    if ($model->image && file_exists(Yii::getAlias('@frontend/web/') . $model->image)) {
+                        unlink(Yii::getAlias('@frontend/web/') . $model->image);
+                    }
+
+                    $imagePath = $uploadPath . uniqid() . '.' . $imageFile->extension;
+
+                    if ($imageFile->saveAs($imagePath)) {
+                        $model->image = 'uploads/' . basename($imagePath);
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Failed to save image.');
+                    }
+                }
+
+                if ($model->save()) {
+                    $model->saveCategories();
+
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
         }
 
         return $this->render('update', [
             'model' => $model,
+            'categoryOptions' => $model->getCategoryOptions(),
         ]);
     }
 
@@ -114,10 +164,23 @@ class PostController extends AdminController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $imagePath = Yii::getAlias('@frontend/web/') . $model->image;
+
+        if ($model->image && file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Post has been deleted successfully.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Failed to delete the post.');
+        }
 
         return $this->redirect(['index']);
     }
+
 
     /**
      * Finds the Posts model based on its primary key value.

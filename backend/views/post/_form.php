@@ -17,7 +17,25 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'imageFile')->fileInput() ?>
+
     <?= $form->field($model, 'content')->widget(CKEditor::class, [
+        'options' => [
+            'rows' => 6,
+            'height' => 400,
+            'toolbar' => [
+                ['Bold', 'Italic', 'Underline'],
+                ['NumberedList', 'BulletedList'],
+                ['Link', 'Unlink'],
+                ['Image', 'Table', 'HorizontalRule'],
+                ['Undo', 'Redo']
+            ],
+            'removePlugins' => 'elementspath',
+            'resize_enabled' => false,
+        ],
+    ]) ?>
+
+    <?= $form->field($model, 'information')->widget(CKEditor::class, [
         'options' => [
             'rows' => 6,
             'height' => 400,

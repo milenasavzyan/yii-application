@@ -31,7 +31,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'title',
+            [
+                'attribute' => 'image',
+                'value' => function($model) {
+                    $imagePath = Yii::getAlias('@frontend/web/' . $model->image);
+                    if (file_exists($imagePath)) {
+                        return Html::img('/uploads/' . basename($model->image), ['width' => '100px']);
+                    } else {
+                        return 'Image not found';
+                    }
+                },
+                'format' => 'raw',
+            ],
             'content:ntext',
+            'information:ntext',
             [
                 'attribute' => 'categories',
                 'value' => function($model) {

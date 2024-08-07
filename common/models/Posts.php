@@ -3,13 +3,14 @@ namespace common\models;
 
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
-use yii\db\Expression;
 
 /**
  * This is the model class for table "posts".
  *
  * @property int $id
  * @property string $title
+ * @property string|null $information
+ * @property string|null $image
  * @property string $content
  * @property int $created_at
  * @property int $updated_at
@@ -19,6 +20,7 @@ use yii\db\Expression;
 class Posts extends ActiveRecord
 {
     public $categories = [];
+    public $imageFile;
 
     /**
      * {@inheritdoc}
@@ -37,7 +39,8 @@ class Posts extends ActiveRecord
             [['title', 'content'], 'required'],
             [['content'], 'string'],
             [['created_at', 'updated_at'], 'integer'],
-            [['title'], 'string', 'max' => 255],
+            [['title', 'image'], 'string', 'max' => 255],
+            [['information'], 'string', 'max' => 5000],
             [['categories'], 'safe'],
         ];
     }
@@ -65,11 +68,6 @@ class Posts extends ActiveRecord
         return [
             TimestampBehavior::class => [
                 'class' => TimestampBehavior::class,
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-                ],
-                'value' => new Expression('NOW()'),
             ],
         ];
     }
@@ -79,14 +77,20 @@ class Posts extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+
     public function getCategoryPosts()
     {
         return $this->hasMany(CategoryPost::class, ['post_id' => 'id']);
     }
-
-    public function getCategory()
+    /**
+     * Gets query for [[Categories]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategories()
     {
-        return $this->hasOne(Category::class, ['id' => 'id']);
+        return $this->hasMany(Category::class, ['id' => 'category_id'])
+            ->via('categoryPosts');
     }
 
     public function getCategoryNames()

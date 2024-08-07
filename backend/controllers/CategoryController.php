@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Category;
 use backend\models\CategorySearch;
+use Yii;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -51,8 +52,25 @@ class CategoryController extends AdminController
         $model = new Category();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $imageFile = \yii\web\UploadedFile::getInstance($model, 'image');
+                if ($imageFile) {
+                    $uploadPath = Yii::getAlias('@frontend/web/uploads/');
+                    if (!is_dir($uploadPath)) {
+                        mkdir($uploadPath, 0775, true);
+                    }
+
+                    $imagePath = $uploadPath . uniqid() . '.' . $imageFile->extension;
+                    if ($imageFile->saveAs($imagePath)) {
+                        $model->image = 'uploads/' . basename($imagePath);
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Failed to save image.');
+                    }
+                }
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -62,6 +80,8 @@ class CategoryController extends AdminController
             'model' => $model,
         ]);
     }
+
+
 
 
     /**
@@ -75,8 +95,27 @@ class CategoryController extends AdminController
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $imageFile = \yii\web\UploadedFile::getInstance($model, 'image');
+                if ($imageFile) {
+                    $uploadPath = Yii::getAlias('@frontend/web/uploads/');
+                    if (!is_dir($uploadPath)) {
+                        mkdir($uploadPath, 0775, true);
+                    }
+
+                    $imagePath = $uploadPath . uniqid() . '.' . $imageFile->extension;
+                    if ($imageFile->saveAs($imagePath)) {
+                        $model->image = 'uploads/' . basename($imagePath);
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Failed to save image.');
+                    }
+                }
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            }
         }
 
         return $this->render('update', [
@@ -93,11 +132,22 @@ class CategoryController extends AdminController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $imagePath = Yii::getAlias('@frontend/web/') . $model->image;
+
+        if ($model->image && file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Post has been deleted successfully.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Failed to delete the post.');
+        }
 
         return $this->redirect(['index']);
     }
-
     /**
      * Finds the Category model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
