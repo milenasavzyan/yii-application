@@ -13,10 +13,6 @@ return [
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
     'modules' => [],
-    'aliases' => [
-        '@web' => 'http://localhost/frontend/web', // Adjust this URL if necessary
-        '@webroot' => 'path/to/frontend/web',
-    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
