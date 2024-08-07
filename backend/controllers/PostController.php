@@ -65,15 +65,10 @@ class PostController extends AdminController
 
                 if ($imageFile) {
                     $uploadPath = Yii::getAlias('@frontend/web/uploads/');
-
-                    if (!is_dir($uploadPath)) {
-                        mkdir($uploadPath, 0775, true);
-                    }
-
                     $imagePath = $uploadPath . uniqid() . '.' . $imageFile->extension;
 
                     if ($imageFile->saveAs($imagePath)) {
-                        $model->image = 'uploads/' . basename($imagePath);
+                        $model->image = basename($imagePath);
                     } else {
                         Yii::$app->session->setFlash('error', 'Failed to save image.');
                     }
@@ -121,10 +116,6 @@ class PostController extends AdminController
                 if ($imageFile) {
                     $uploadPath = Yii::getAlias('@frontend/web/uploads/');
 
-                    if (!is_dir($uploadPath)) {
-                        mkdir($uploadPath, 0775, true);
-                    }
-
                     if ($model->image && file_exists(Yii::getAlias('@frontend/web/') . $model->image)) {
                         unlink(Yii::getAlias('@frontend/web/') . $model->image);
                     }
@@ -132,7 +123,7 @@ class PostController extends AdminController
                     $imagePath = $uploadPath . uniqid() . '.' . $imageFile->extension;
 
                     if ($imageFile->saveAs($imagePath)) {
-                        $model->image = 'uploads/' . basename($imagePath);
+                        $model->image = basename($imagePath);
                     } else {
                         Yii::$app->session->setFlash('error', 'Failed to save image.');
                     }

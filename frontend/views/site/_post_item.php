@@ -11,7 +11,7 @@ $shortContent = mb_strimwidth($content, 0, 100, '...');
     <div class="tn-title">
         <?php if ($model->image): ?>
             <a href="<?= Url::to(['view', 'id' => $model->id]) ?>">
-                <img src="<?= Yii::getAlias('@web/' . $model->image) ?>" alt="<?= htmlspecialchars($model->title) ?>" class="img-fluid" style="height: auto; width: 150px;">
+                <img src="<?= Url::to('@web/uploads/' . $model->image) ?>" alt="<?= htmlspecialchars($model->title) ?>" class="img-fluid" style="height: auto; width: 150px;">
             </a>
          <?php endif; ?>
     </div>

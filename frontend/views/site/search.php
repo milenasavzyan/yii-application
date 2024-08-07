@@ -28,7 +28,10 @@ $this->title = 'Search Results for: ' . Html::encode($query);
             </div>
             <div class="col-md-6 tn-right">
                 <div class="row">
-                    <?php foreach ($categories as $category): ?>
+                    <?php
+                    $limitedCategories = array_slice($categories, 0, 4);
+                    ?>
+                    <?php foreach ($limitedCategories as $category): ?>
                         <div class="col-md-6">
                             <div class="tn-img">
                                 <?php if ($category->image): ?>
@@ -42,10 +45,12 @@ $this->title = 'Search Results for: ' . Html::encode($query);
                     <?php endforeach; ?>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 <!-- Top News End-->
+
 
 <div class="tab-news">
     <div class="container">

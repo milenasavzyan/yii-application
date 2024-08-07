@@ -56,13 +56,10 @@ class CategoryController extends AdminController
                 $imageFile = \yii\web\UploadedFile::getInstance($model, 'image');
                 if ($imageFile) {
                     $uploadPath = Yii::getAlias('@frontend/web/uploads/');
-                    if (!is_dir($uploadPath)) {
-                        mkdir($uploadPath, 0775, true);
-                    }
 
                     $imagePath = $uploadPath . uniqid() . '.' . $imageFile->extension;
                     if ($imageFile->saveAs($imagePath)) {
-                        $model->image = 'uploads/' . basename($imagePath);
+                        $model->image = basename($imagePath);
                     } else {
                         Yii::$app->session->setFlash('error', 'Failed to save image.');
                     }
@@ -100,13 +97,10 @@ class CategoryController extends AdminController
                 $imageFile = \yii\web\UploadedFile::getInstance($model, 'image');
                 if ($imageFile) {
                     $uploadPath = Yii::getAlias('@frontend/web/uploads/');
-                    if (!is_dir($uploadPath)) {
-                        mkdir($uploadPath, 0775, true);
-                    }
 
                     $imagePath = $uploadPath . uniqid() . '.' . $imageFile->extension;
                     if ($imageFile->saveAs($imagePath)) {
-                        $model->image = 'uploads/' . basename($imagePath);
+                        $model->image = basename($imagePath);
                     } else {
                         Yii::$app->session->setFlash('error', 'Failed to save image.');
                     }

@@ -109,10 +109,12 @@ class SiteController extends Controller
             ->all();
 
 
-        $categoryId = $model->title;
+        $categoryIds = \yii\helpers\ArrayHelper::getColumn($model->categoryPosts, 'category_id');
+
         $sameNews = Posts::find()
-            ->where(['title' => $categoryId])
-            ->andWhere(['!=', 'id', $id])
+            ->joinWith('categoryPosts')
+            ->where(['category_post.category_id' => $categoryIds])
+            ->andWhere(['!=', 'posts.id', $id])
             ->limit(6)
             ->all();
 

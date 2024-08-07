@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'image',
                 'value' => function($model) {
-                    $imagePath = Yii::getAlias('@frontend/web/' . $model->image);
+                    $imagePath = Yii::getAlias('@frontend/web/uploads/' . $model->image);
                     if (file_exists($imagePath)) {
                         return Html::img('/uploads/' . basename($model->image), ['width' => '100px']);
                     } else {
