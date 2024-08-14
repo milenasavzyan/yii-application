@@ -76,7 +76,7 @@ class SiteController extends Controller
      */
     public function actionIndex($categoryId = null)
     {
-        $categories = Category::find()->all();
+        $categories = Category::find()->where(['parent_id' => 0]) ->with('children')->all();
         $query = Posts::find()->joinWith('categoryPosts');
 
         if ($categoryId !== null) {
@@ -101,7 +101,7 @@ class SiteController extends Controller
     public function actionView($id)
     {
         $model = Posts::findOne($id);
-        $categories = Category::find()->all();
+        $categories = Category::find()->where('parent_id = 0')->all();
 
         $otherNews = Posts::find()
             ->where(['!=', 'id', $id])
@@ -119,6 +119,12 @@ class SiteController extends Controller
             ->all();
 
 
+        foreach ($model->categoryPosts as $categoryPost){
+            $category = $categoryPost->category;
+            $parentTitle = $category->parent ? $category->parent->title : 'No Parent';
+        }
+
+
         if ($model === null) {
             throw new \yii\web\NotFoundHttpException('The requested page does not exist.');
         }
@@ -128,6 +134,7 @@ class SiteController extends Controller
             'categories' => $categories,
             'otherNews' => $otherNews,
             'sameNews' => $sameNews,
+            'parentTitle' => $parentTitle,
         ]);
     }
 

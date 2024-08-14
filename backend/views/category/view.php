@@ -30,6 +30,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
+            [
+                'attribute' => 'parent_id',
+                'value' => function($model) {
+                    return $model->parent ? $model->parent->title : 'None';
+                },
+            ],
             'title',
             [
                 'attribute' => 'image',

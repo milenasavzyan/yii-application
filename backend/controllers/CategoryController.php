@@ -5,7 +5,10 @@ namespace backend\controllers;
 use common\models\Category;
 use backend\models\CategorySearch;
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * CategoryController implements the CRUD actions for Category model.
@@ -47,6 +50,7 @@ class CategoryController extends AdminController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+
     public function actionCreate()
     {
         $model = new Category();
@@ -77,8 +81,6 @@ class CategoryController extends AdminController
             'model' => $model,
         ]);
     }
-
-
 
 
     /**

@@ -1,6 +1,8 @@
 <?php
+
 namespace common\models;
 
+use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 
@@ -21,6 +23,9 @@ class Posts extends ActiveRecord
 {
     public $categories = [];
     public $imageFile;
+    public $parent_category;
+    public $child_categories = [];
+
 
     /**
      * {@inheritdoc}
@@ -38,10 +43,10 @@ class Posts extends ActiveRecord
         return [
             [['title', 'content'], 'required'],
             [['content'], 'string'],
-            [['created_at', 'updated_at'], 'integer'],
+            [['created_at', 'updated_at', 'parent_category'], 'integer'],
             [['title', 'image'], 'string', 'max' => 255],
             [['information'], 'string', 'max' => 5000],
-            [['categories'], 'safe'],
+            [['child_categories'], 'each', 'rule' => ['integer']],
         ];
     }
 
@@ -56,7 +61,6 @@ class Posts extends ActiveRecord
             'content' => 'Content',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
-            'categories' => 'Categories',
         ];
     }
 
@@ -77,11 +81,11 @@ class Posts extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-
     public function getCategoryPosts()
     {
         return $this->hasMany(CategoryPost::class, ['post_id' => 'id']);
     }
+
     /**
      * Gets query for [[Categories]].
      *
@@ -104,27 +108,41 @@ class Posts extends ActiveRecord
     {
         return \common\models\Category::find()->select(['title', 'id'])->indexBy('id')->column();
     }
+    /**
+     * Saves the categories.
+     */
+    public function saveCategories($categories)
+    {
+        if ($categories) {
+            $this->addCategory($categories);
+        }
+    }
 
     /**
      * Updates the categories for this post.
      */
+
     public function updateCategories()
     {
-        CategoryPost::deleteAll(['post_id' => $this->id]);
-
-        $this->saveCategories();
+        $categories = Yii::$app->request->post('Categories', []);
+        $this->addCategory($categories);
     }
 
-    /**
-     * Saves the selected categories for this post.
-     */
-    public function saveCategories()
+    protected function addCategory($categories)
     {
-        foreach ($this->categories as $categoryId) {
-            $categoryPost = new CategoryPost();
-            $categoryPost->post_id = $this->id;
-            $categoryPost->category_id = $categoryId;
-            $categoryPost->save();
+        Yii::$app->db->createCommand()
+            ->delete('category_post', ['post_id' => $this->id])
+            ->execute();
+
+        foreach ($categories as $categoryId) {
+            Yii::$app->db->createCommand()
+                ->insert('category_post', [
+                    'post_id' => $this->id,
+                    'category_id' => $categoryId,
+                ])
+                ->execute();
         }
+
     }
+
 }

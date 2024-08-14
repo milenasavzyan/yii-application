@@ -2,11 +2,15 @@
 
 namespace backend\controllers;
 
+use common\models\Category;
+use common\models\CategoryPost;
 use common\models\Posts;
 use backend\models\PostSearch;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
+use yii\base\Exception;
 
 /**
  * PostController implements the CRUD actions for Posts model.
@@ -31,7 +35,21 @@ class PostController extends AdminController
         ]);
     }
 
+    public function actionTest()
+    {
+        $parentId = Yii::$app->request->get('parent_id');
+        if ($parentId === null) {
+            return $this->asJson(['error' => 'Parent ID is required.']);
+        }
 
+        $childCategories = Category::find()->where(['parent_id' => $parentId])->all();
+
+        if (empty($childCategories)) {
+            return $this->renderPartial('_no_child_categories');
+        }
+
+        return $this->renderPartial('_child_categories', ['childCategories' => $childCategories]);
+    }
     /**
      * Displays a single Posts model.
      * @param int $id ID
@@ -58,6 +76,16 @@ class PostController extends AdminController
     public function actionCreate()
     {
         $model = new Posts();
+        $categories = Category::find()->where(['parent_id' => 0])->all();
+        $parentCategories = ArrayHelper::map($categories, 'id', 'title');
+
+        $childCategories = [];
+        foreach ($categories as $category) {
+            if ($category->parent_id === 0) {
+                $childCategories[$category->id] = Category::find()->where(['parent_id' => $category->id])->all();
+            }
+        }
+
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
@@ -75,7 +103,8 @@ class PostController extends AdminController
                 }
 
                 if ($model->save()) {
-                    $model->saveCategories();
+                    $categories = $this->request->post('Categories', []);
+                    $model->saveCategories($categories);
 
                     return $this->redirect(['view', 'id' => $model->id]);
                 }
@@ -86,11 +115,10 @@ class PostController extends AdminController
 
         return $this->render('create', [
             'model' => $model,
-            'categoryOptions' => $model->getCategoryOptions(),
+            'parentCategories' => $parentCategories,
+            'childCategories' => $childCategories,
         ]);
     }
-
-
 
 
     /**
@@ -103,11 +131,19 @@ class PostController extends AdminController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $categories = Category::find()->where(['parent_id' => 0])->all();
+        $parentCategories = ArrayHelper::map($categories, 'id', 'title');
 
         $model->categories = ArrayHelper::getColumn(
             $model->categoryPosts,
             'category_id'
         );
+        $childCategories = [];
+        foreach ($categories as $category) {
+            if ($category->parent_id === 0) {
+                $childCategories[$category->id] = Category::find()->where(['parent_id' => $category->id])->all();
+            }
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
@@ -130,7 +166,7 @@ class PostController extends AdminController
                 }
 
                 if ($model->save()) {
-                    $model->saveCategories();
+                    $model->updateCategories();
 
                     return $this->redirect(['view', 'id' => $model->id]);
                 }
@@ -142,6 +178,8 @@ class PostController extends AdminController
         return $this->render('update', [
             'model' => $model,
             'categoryOptions' => $model->getCategoryOptions(),
+            'parentCategories' => $parentCategories,
+            'childCategories' => $childCategories,
         ]);
     }
 

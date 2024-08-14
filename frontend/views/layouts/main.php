@@ -5,12 +5,15 @@
 /** @var \common\models\Category[] $categories */
 /** @var \yii\data\ActiveDataProvider $dataProvider */
 
+use app\components\MenuWidget;
+use common\models\Category;
 use common\widgets\Alert;
 use frontend\assets\AppAsset;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 
 AppAsset::register($this);
+$categories = Category::find()->where(['parent_id' => 0])->all();
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -77,10 +80,14 @@ AppAsset::register($this);
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mr-auto">
                         <a href="<?= \yii\helpers\Url::to('/') ?>" class="nav-item nav-link active">Home</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Categories</a>
+                                <?= MenuWidget::widget(['tpl' => 'menu']) ?>
+                        </div>
+
                         <a href="<?= \yii\helpers\Url::to('/site/about') ?>" class="nav-item nav-link">About Us</a>
                         <a href="<?= \yii\helpers\Url::to('/site/contact') ?>" class="nav-item nav-link">Contact Us</a>
                     </div>

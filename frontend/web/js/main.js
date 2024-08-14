@@ -87,7 +87,7 @@
             }
         ]
     });
-    
+
     
     // Related News Slider
     $('.sn-slider').slick({

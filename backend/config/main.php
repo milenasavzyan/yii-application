@@ -45,6 +45,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'admin' => 'site/index',
+                'category/get-child-categories' => 'category/get-child-categories',
             ],
         ],
     ],

@@ -9,7 +9,7 @@
                         <div class="tn-img">
                             <img src="<?= \yii\helpers\Url::to('@web/uploads/' . $category->image) ?>" alt="<?= \yii\helpers\Html::encode($category->title) ?>" style="width: 600px; height: 346px;" />
                             <div class="tn-title">
-                                <a href="<?= \yii\helpers\Url::to(['/', 'categoryId' => $category->id]) ?>"><?= $category->title ?></a>
+                                <a href="<?= \yii\helpers\Url::to(['category/view', 'id' => $category['id']]) ?>"><?= $category->title ?></a>
                             </div>
                         </div>
                     </div>
@@ -28,7 +28,7 @@
                                     <img src="<?= \yii\helpers\Url::to('@web/uploads/' . $category->image) ?>" alt="<?= \yii\helpers\Html::encode($category->title) ?>" style="width: 300px; height: 173px;" />
                                 <?php endif; ?>
                                 <div class="tn-title">
-                                    <a href="<?= \yii\helpers\Url::to(['/', 'categoryId' => $category->id]) ?>"><?= $category->title ?></a>
+                                    <a href="<?= \yii\helpers\Url::to(['category/view', 'id' => $category['id']]) ?>"><?= $category->title ?></a>
                                 </div>
                             </div>
                         </div>
@@ -65,18 +65,6 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <!-- Category Tabs -->
-                <ul class="nav nav-pills nav-justified">
-                    <?php foreach ($categories as $category): ?>
-                        <li class="nav-item">
-                            <a class="nav-link <?= $selectedCategory == $category->id ? 'active' : '' ?>"
-                               href="<?= \yii\helpers\Url::to(['/', 'categoryId' => $category->id]) ?>">
-                                <?= htmlspecialchars($category->title) ?>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-
                 <!-- Posts List -->
                 <div class="tab-content">
                     <div class="row">
@@ -89,7 +77,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -124,7 +111,7 @@
                         <div class="mn-img">
                             <img src="<?= \yii\helpers\Url::to('@web/uploads/' . $category->image) ?>" alt="<?= \yii\helpers\Html::encode($category->title) ?>" style="width: 350px; height: 250px;" />
                             <div class="mn-title">
-                                <a href="<?= \yii\helpers\Url::to(['/', 'categoryId' => $category->id]) ?>"><?= $category->title ?></a>
+                                <a href="<?= \yii\helpers\Url::to(['category/view', 'id' => $category['id']]) ?>"><?= $category->title ?></a>
                             </div>
                         </div>
                     </div>
@@ -136,3 +123,15 @@
 </div>
 <!-- Main News End-->
 
+<!--<script>-->
+<!--    function toggleSubMenu(event, submenuId) {-->
+<!--        event.preventDefault();-->
+<!--        var submenu = document.getElementById(submenuId);-->
+<!---->
+<!--        if (submenu.style.display === 'block') {-->
+<!--            submenu.style.display = 'none';-->
+<!--        } else {-->
+<!--            submenu.style.display = 'block';-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->

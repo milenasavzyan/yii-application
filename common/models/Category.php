@@ -33,8 +33,10 @@ class Category extends ActiveRecord
     {
         return [
             [['title'], 'required'],
-            [['created_at', 'updated_at'], 'integer'],
+            [['parent_id', 'created_at', 'updated_at'], 'integer'],
             [['title'], 'string', 'max' => 255],
+            [['image'], 'string', 'max' => 255],
+            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => self::class, 'targetAttribute' => ['parent_id' => 'id']],
         ];
     }
 
@@ -46,6 +48,8 @@ class Category extends ActiveRecord
         return [
             'id' => 'ID',
             'title' => 'Title',
+            'parent_id' => 'Parent',
+            'image' => 'Image',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -61,6 +65,25 @@ class Category extends ActiveRecord
                 'class' => TimestampBehavior::class,
             ],
         ];
+    }
+    /**
+     * Gets query for [[Parent]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParent()
+    {
+        return $this->hasOne(self::class, ['id' => 'parent_id']);
+    }
+
+    public function getChildren()
+    {
+        return $this->hasMany(self::class, ['parent_id' => 'id']);
+    }
+    public static function getCategoryList()
+    {
+        $categories = self::find()->select(['title', 'id'])->where(['parent_id' => 0])->all();
+        return \yii\helpers\ArrayHelper::map($categories, 'id', 'title');
     }
 
     /**

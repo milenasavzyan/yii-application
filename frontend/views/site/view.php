@@ -26,7 +26,7 @@ use yii\helpers\Url;
                     </div>
                     <div class="post-content">
                         <?php if ($model->image): ?>
-                            <img src="<?= Yii::getAlias('@web/' . $model->image) ?>" alt="<?= Html::encode($model->title) ?>" style="width: 100%; height: auto;">
+                            <img src="<?= Yii::getAlias('@web/uploads/' . $model->image) ?>" alt="<?= Html::encode($model->title) ?>" style="width: 100%; height: auto;">
                         <?php endif; ?>
                         <?php if ($model->information): ?>
                             <p><?= Html::encode(strip_tags($model->information)) ?></p>
@@ -43,6 +43,7 @@ use yii\helpers\Url;
                                             <a href="<?= Url::to(['/', 'categoryId' => $categoryPost->category->id]) ?>">
                                                 <?= Html::encode($categoryPost->category->title) ?>
                                             </a>
+                                            (Parent: <?= Html::encode($parentTitle) ?>)
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
@@ -59,7 +60,7 @@ use yii\helpers\Url;
                             <div class="col-md-4">
                                 <div class="sn-img">
                                     <?php if ($newsItem->image): ?>
-                                        <img src="<?= Yii::getAlias('@web/' . $newsItem->image) ?>" alt="<?= Html::encode($newsItem->title) ?>" style="width: 250px; height: 170px;"/>
+                                        <img src="<?= Yii::getAlias('@web/uploads/' . $newsItem->image) ?>" alt="<?= Html::encode($newsItem->title) ?>" style="width: 250px; height: 170px;"/>
                                     <?php endif; ?>
                                     <div class="sn-title">
                                         <a href="<?= \yii\helpers\Url::to(['view', 'id' => $newsItem->id]) ?>"><?= Html::encode($newsItem->title) ?></a>
@@ -81,7 +82,7 @@ use yii\helpers\Url;
                                     <div class="nl-img">
                                         <?php if ($newsItem->image): ?>
                                             <a href="<?= \yii\helpers\Url::to(['view', 'id' => $newsItem->id]) ?>">
-                                                <img src="<?= Yii::getAlias('@web/' . $newsItem->image) ?>" alt="<?= htmlspecialchars($newsItem->title) ?>" />
+                                                <img src="<?= Yii::getAlias('@web/uploads/' . $newsItem->image) ?>" alt="<?= htmlspecialchars($newsItem->title) ?>" />
                                             </a>
                                         <?php endif; ?>
                                     </div>
@@ -99,7 +100,7 @@ use yii\helpers\Url;
                             <ul>
                                 <?php foreach ($categories as $category): ?>
                                     <li>
-                                        <a href="<?= Url::to(['/', 'categoryId' => $category->id]) ?>">
+                                        <a href="<?= Url::to(['category/view', 'id' => $category['id']]) ?>">
                                             <?= Html::encode($category->title) ?>
                                         </a>
                                     </li>
